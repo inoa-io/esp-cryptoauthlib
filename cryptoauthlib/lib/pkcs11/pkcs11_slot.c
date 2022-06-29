@@ -119,7 +119,7 @@ CK_RV pkcs11_slot_config(CK_SLOT_ID slotID)
     return rv;
 }
 
-#if 0
+#if PKCS11_508_SUPPORT && PKCS11_608_SUPPORT
 static ATCA_STATUS pkcs11_slot_check_device_type(ATCAIfaceCfg * ifacecfg)
 {
     uint8_t info[4] = { 0 };
@@ -174,6 +174,13 @@ CK_RV pkcs11_slot_init(CK_SLOT_ID slotID)
         return CKR_SLOT_ID_INVALID;
     }
 
+#if PKCS11_USE_STATIC_CONFIG
+    if (CKR_OK != pkcs11_config_interface(slot_ctx))
+    {
+        return CKR_DEVICE_ERROR;
+    }
+#endif
+
     if (!slot_ctx->initialized)
     {
         ATCAIfaceCfg * ifacecfg = &slot_ctx->interface_config;
@@ -191,17 +198,10 @@ CK_RV pkcs11_slot_init(CK_SLOT_ID slotID)
     #ifdef ATCA_HAL_I2C
         if (ATCA_SUCCESS != status)
         {
-#ifdef ATCA_ENABLE_DEPRECATED
-            if (0xC0 != ifacecfg->atcai2c.slave_address)
-            {
-                /* Try the default address */
-                ifacecfg->atcai2c.slave_address = 0xC0;
-#else
             if (0xC0 != ifacecfg->atcai2c.address)
             {
                 /* Try the default address */
                 ifacecfg->atcai2c.address = 0xC0;
-#endif
                 atcab_release();
                 atca_delay_ms(1);
                 retries = 2;

@@ -306,11 +306,7 @@ static CK_RV pkcs11_config_parse_interface(pkcs11_slot_ctx_ptr slot_ctx, char* c
         slot_ctx->interface_config.iface_type = ATCA_I2C_IFACE;
         if (argc > 1)
         {
-#ifdef ATCA_ENABLE_DEPRECATED
-            slot_ctx->interface_config.atcai2c.slave_address = (uint8_t)strtol(argv[1], NULL, 16);
-#else
             slot_ctx->interface_config.atcai2c.address = (uint8_t)strtol(argv[1], NULL, 16);
-#endif
         }
         if (argc > 2)
         {
@@ -318,7 +314,7 @@ static CK_RV pkcs11_config_parse_interface(pkcs11_slot_ctx_ptr slot_ctx, char* c
         }
         if (argc > 3)
         {
-            slot_ctx->interface_config.atcai2c.baud = (uint8_t)strtol(argv[3], NULL, 10);
+            slot_ctx->interface_config.atcai2c.baud = (uint32_t)strtol(argv[3], NULL, 10);
         }
         rv = CKR_OK;
         #endif
@@ -422,8 +418,8 @@ static CK_RV pkcs11_config_parse_freeslots(pkcs11_slot_ctx_ptr slot_ctx, char* c
 
 static CK_RV pkcs11_config_parse_object(pkcs11_slot_ctx_ptr slot_ctx, char* cfgstr)
 {
-    int argc = 3;
-    char * argv[3];
+    char * argv[5];
+    int argc = (int)sizeof(argv);
     CK_RV rv = CKR_GENERAL_ERROR;
     pkcs11_object_ptr pObject;
 
