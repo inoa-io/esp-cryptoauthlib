@@ -21,7 +21,7 @@ This requires the `esp_idf_version.h' to be defined.
 
 /* Include HALS */
 #define ATCA_HAL_I2C
-#define ATCA_USE_RTOS_TIMER 1
+//#define ATCA_USE_RTOS_TIMER 1
 #define ATCA_MBEDTLS
 //#define ATCA_CA_SUPPORT
 /* Included device support */
